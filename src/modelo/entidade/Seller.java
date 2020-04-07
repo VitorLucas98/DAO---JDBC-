@@ -3,7 +3,8 @@ package modelo.entidade;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Seller implements  Serializable{
+public class Seller implements  Serializable{ // Serializable os objetos ser transformados em sequencia de bytes,
+	//usa para arquivos, trafegados em rede
 
 
 	private static final long serialVersionUID = 1L;
@@ -62,6 +63,7 @@ public class Seller implements  Serializable{
 	public void setDepartment(Department department) {
 		this.department = department;
 	}
+	// Equals e hashCode serve para comparar o conteudo e não referencia de ponteiros 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
