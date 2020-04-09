@@ -20,6 +20,7 @@ public class Programa {
 		SellerDao sellerDao = DaoFactory.createSellerDao();// isso faz como que para instanciar uma DAO eu chamo a fabrica, 
 		//o programa não conhece a implementação, conhece somente a interface, uma forma de fazer uma injeção de dependencia !
 		
+		System.out.println("=== Teste 1 === Seller findById");
 		Seller seller = sellerDao.findById(7);
 		System.out.println(seller);
 	}
