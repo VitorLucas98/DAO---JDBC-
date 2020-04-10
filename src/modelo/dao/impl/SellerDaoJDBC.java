@@ -69,10 +69,11 @@ public class SellerDaoJDBC implements SellerDao {
 			if (rs.next()) { // esse if serve para verificar se veio algum resultado caso não venha ele vai
 //retorna null ou seja não existe o id desejad, se deu verdadeiro entao é pq retornou dados existentes, então iremos navegar,
 // nos dados para instaciar os objetos !
-				
-				
-				Department dep = instanciaDepartment(rs); // utilização do método instanciaDepartment para reutilização de código
-				Seller obj = instanciaSeller(rs, dep); // utilização do método instanciaSeller para reutilização de código
+
+				Department dep = instanciaDepartment(rs); // utilização do método instanciaDepartment para reutilização
+															// de código
+				Seller obj = instanciaSeller(rs, dep); // utilização do método instanciaSeller para reutilização de
+														// código
 
 				return obj;
 
@@ -90,7 +91,8 @@ public class SellerDaoJDBC implements SellerDao {
 		}
 	}
 
-	private Seller instanciaSeller(ResultSet rs, Department dep) throws SQLException { // método de instancia do objeto Seller
+	private Seller instanciaSeller(ResultSet rs, Department dep) throws SQLException { // método de instancia do objeto
+																						// Seller
 		Seller obj = new Seller();
 		obj.setId(rs.getInt("Id"));
 		obj.setName(rs.getString("Name"));
@@ -101,7 +103,8 @@ public class SellerDaoJDBC implements SellerDao {
 		return obj;
 	}
 
-	private Department instanciaDepartment(ResultSet rs) throws SQLException { // método de instancia do objeto Department
+	private Department instanciaDepartment(ResultSet rs) throws SQLException { // método de instancia do objeto
+																				// Department
 		Department dep = new Department();
 		dep.setId(rs.getInt("DepartmentId"));
 		dep.setNome(rs.getString("DepName"));
@@ -110,8 +113,52 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public List<Seller> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName  " + "FROM seller INNER JOIN department  "
+							+ "ON seller.DepartmentId = department.Id ORDER BY Name");
+
+			rs = st.executeQuery();
+
+			// como são varios valores vamos ter q usar o while e usaremos uma lista
+			List<Seller> lista = new ArrayList<>();
+
+			Map<Integer, Department> map = new HashMap<>(); // criamso um Map vazio e ai eu vou guarda dentro desse map
+			// qualquer departamento que eu instanciar
+
+			// Ai a cada vez que passar no while vout ter que testar se o departamento já
+			// existe.
+			while (rs.next()) {
+				Department dep = map.get(rs.getInt("DepartmentId"));// vou no map e tento buscar um departamento
+				// que tenha esse id, se não existir, o map.get vai retornar nulo.
+
+				if (dep == null) { // se for nulo, teremos que instanciar o dep a partir do rs
+					dep = instanciaDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep); // vou salvar esse departamento dentro do map para que na
+																// proxima vez
+					// poder verificar e ver se ele já existe
+				}
+				Seller obj = instanciaSeller(rs, dep);
+				lista.add(obj);
+
+				/*
+				 * se fosse desse jeito estaria errado pois iria instanciar 2 objetos com os
+				 * mesmos valores, temos que fazer de um jeito para instanciar só um objeto
+				 * 
+				 * Department dep = instanciaDepartment(rs); Seller obj = instanciaSeller(rs,
+				 * dep); lista.add(obj);
+				 */
+			}
+
+			return lista;
+		} catch (SQLException e) {
+			throw new DbException(e.getMessage());
+		} finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
@@ -119,43 +166,46 @@ public class SellerDaoJDBC implements SellerDao {
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
-			st = conn.prepareStatement("SELECT seller.*,department.Name as DepName  "
-					+ "FROM seller INNER JOIN department  "
-					+ "ON seller.DepartmentId = department.Id "
-					+ "WHERE DepartmentId = ? ORDER BY Name");
+			st = conn.prepareStatement(
+					"SELECT seller.*,department.Name as DepName  " + "FROM seller INNER JOIN department  "
+							+ "ON seller.DepartmentId = department.Id " + "WHERE DepartmentId = ? ORDER BY Name");
 			st.setInt(1, department.getId());
 			rs = st.executeQuery();
-			
-			
+
 			// como são varios valores vamos ter q usar o while e usaremos uma lista
 			List<Seller> lista = new ArrayList<>();
-			
-			Map<Integer, Department> map = new HashMap<>(); // criação de uma estrutura map para controlar 
-			//a não repetição de departamento; Integer = id , e Department =  objeto
+
+			Map<Integer, Department> map = new HashMap<>(); // criamso um Map vazio e ai eu vou guarda dentro desse map
+			// qualquer departamento que eu instanciar
+
+			// Ai a cada vez que passar no while vout ter que testar se o departamento já
+			// existe.
 			while (rs.next()) {
-				Department dep = map.get(rs.getInt("DepartmentId"));
-				// primeiro vamos testar se o departamento já existe 
-				
-				if(dep == null) {
+				Department dep = map.get(rs.getInt("DepartmentId"));// vou no map e tento buscar um departamento
+				// que tenha esse id, se não existir, o map.get vai retornar nulo.
+
+				if (dep == null) { // se for nulo, teremos que instanciar o dep a partir do rs
 					dep = instanciaDepartment(rs);
-					map.put(rs.getInt("DepartmentId"), dep);
+					map.put(rs.getInt("DepartmentId"), dep); // vou salvar esse departamento dentro do map para que na
+																// proxima vez
+					// poder verificar e ver se ele já existe
 				}
 				Seller obj = instanciaSeller(rs, dep);
 				lista.add(obj);
-				
-				/* se fosse desse jeito estaria errado pois iria instanciar 2 objetos com os mesmos valores, 
-				 temos que fazer de um jeito para instanciar só um objeto 
-				  
-				 Department dep = instanciaDepartment(rs);
-				Seller obj = instanciaSeller(rs, dep);
-				lista.add(obj);
-				*/
+
+				/*
+				 * se fosse desse jeito estaria errado pois iria instanciar 2 objetos com os
+				 * mesmos valores, temos que fazer de um jeito para instanciar só um objeto
+				 * 
+				 * Department dep = instanciaDepartment(rs); Seller obj = instanciaSeller(rs,
+				 * dep); lista.add(obj);
+				 */
 			}
-			
+
 			return lista;
-		}catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
-		}finally {
+		} finally {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
