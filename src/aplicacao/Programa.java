@@ -29,7 +29,6 @@ public class Programa {
 		Seller obj = sellerDao.findById(7);
 		System.out.println(obj);
 
-
 		System.out.println("\n === Teste 2 === Seller findByDepartment");
 		Department department = new Department(2, null); // como tenho que passar um obj departamento para
 															// findDepartment
@@ -44,12 +43,20 @@ public class Programa {
 		for (Seller seller : lista) {
 			System.out.println(seller);
 		}
-		
+
 		System.out.println("\n === Teste 4 === Seller Insert");
-		Seller newSeller = new Seller(null, "Alan Turing", "alantun@gmail.com", 
+		Seller newSeller = new Seller(null, "Alan Turing", "alantun@gmail.com",
 				new Date(sdf.parse("23/06/1912").getTime()), 7598.9, department);
 		sellerDao.insert(newSeller);
 		System.out.println("ID = " + newSeller.getId());
+
+		System.out.println("\n === Teste 5 === Seller Update");
+		 Seller seller = sellerDao.findById(8);
+		seller.setName("James Gosling");
+		seller.setEmail("JaGosling@gmail.com");
+		sellerDao.update(seller);
+		System.out.println("Update concluido ! ");
+
 	}
 
 }
