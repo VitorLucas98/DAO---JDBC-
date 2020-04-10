@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import modelo.dao.DaoFactory;
 import modelo.dao.SellerDao;
@@ -13,7 +14,9 @@ import modelo.entidade.Seller;
 public class Programa {
 
 	public static void main(String[] args) throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Scanner sc = new Scanner(System.in);
 		/*
 		 * Department obj = new Department(1, "Livros"); System.out.println(obj); Seller
 		 * sl = new Seller(21, "Vitor", "vitorluc.2013@gmail", new Date(), 2000.9, obj);
@@ -57,6 +60,12 @@ public class Programa {
 		sellerDao.update(seller);
 		System.out.println("Update concluido ! ");
 
+		System.out.println("\n === Teste 6 === Seller Delete");
+		System.out.println("Informe qual id deseja deletar: ");
+		int id = sc.nextInt();
+		sellerDao.deleteById(id);
+		System.out.println("Deletado com sucesso ! ");
+		sc.close();
 	}
 
 }
