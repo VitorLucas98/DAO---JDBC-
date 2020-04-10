@@ -4,7 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import db.DB;
 import db.DbException;
@@ -109,6 +112,53 @@ public class SellerDaoJDBC implements SellerDao {
 	public List<Seller> findAll() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<Seller> findDepartment(Department department) {
+		PreparedStatement st = null;
+		ResultSet rs = null;
+		try {
+			st = conn.prepareStatement("SELECT seller.*,department.Name as DepName  "
+					+ "FROM seller INNER JOIN department  "
+					+ "ON seller.DepartmentId = department.Id "
+					+ "WHERE DepartmentId = ? ORDER BY Name");
+			st.setInt(1, department.getId());
+			rs = st.executeQuery();
+			
+			
+			// como são varios valores vamos ter q usar o while e usaremos uma lista
+			List<Seller> lista = new ArrayList<>();
+			
+			Map<Integer, Department> map = new HashMap<>(); // criação de uma estrutura map para controlar 
+			//a não repetição de departamento; Integer = id , e Department =  objeto
+			while (rs.next()) {
+				Department dep = map.get(rs.getInt("DepartmentId"));
+				// primeiro vamos testar se o departamento já existe 
+				
+				if(dep == null) {
+					dep = instanciaDepartment(rs);
+					map.put(rs.getInt("DepartmentId"), dep);
+				}
+				Seller obj = instanciaSeller(rs, dep);
+				lista.add(obj);
+				
+				/* se fosse desse jeito estaria errado pois iria instanciar 2 objetos com os mesmos valores, 
+				 temos que fazer de um jeito para instanciar só um objeto 
+				  
+				 Department dep = instanciaDepartment(rs);
+				Seller obj = instanciaSeller(rs, dep);
+				lista.add(obj);
+				*/
+			}
+			
+			return lista;
+		}catch(SQLException e) {
+			throw new DbException(e.getMessage());
+		}finally {
+			DB.closeResultSet(rs);
+			DB.closeStatement(st);
+		}
 	}
 
 }

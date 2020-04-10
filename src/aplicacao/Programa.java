@@ -1,6 +1,6 @@
 package aplicacao;
 
-import java.util.Date;
+import java.util.List;
 
 import modelo.dao.DaoFactory;
 import modelo.dao.SellerDao;
@@ -21,8 +21,17 @@ public class Programa {
 		//o programa não conhece a implementação, conhece somente a interface, uma forma de fazer uma injeção de dependencia !
 		
 		System.out.println("=== Teste 1 === Seller findById");
-		Seller seller = sellerDao.findById(7);
-		System.out.println(seller);
+		Seller obj = sellerDao.findById(7);
+		System.out.println(obj);
+		
+		System.out.println();
+		
+		System.out.println("=== Teste 2 === Seller findByDepartment");
+		Department department = new Department(2, null);
+		List<Seller> lista = sellerDao.findDepartment(department);
+		for (Seller seller : lista) {
+			System.out.println(seller);
+		}
 	}
 
 }
