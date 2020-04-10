@@ -11,7 +11,7 @@ import modelo.dao.SellerDao;
 import modelo.entidade.Department;
 import modelo.entidade.Seller;
 
-public class Programa {
+public class ProgramaTesteSeller {
 
 	public static void main(String[] args) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
