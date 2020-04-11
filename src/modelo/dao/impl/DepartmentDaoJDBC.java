@@ -4,8 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.sql.Statement;
 import java.util.ArrayList;
+
 import java.util.List;
 
 import db.DB;
@@ -71,18 +73,18 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		PreparedStatement st  = null;
+		PreparedStatement st = null;
 		try {
 			st = conn.prepareStatement("Delete from department where id = ? ");
-			
+
 			st.setInt(1, id);
-			
+
 			int linhasAfetadas = st.executeUpdate();
 			if (linhasAfetadas == 0) {
 				throw new DbException("Não foi possivel deletar !");
 			}
-			
-		}catch(SQLException e) {
+
+		} catch (SQLException e) {
 			throw new DbException(e.getMessage());
 		}
 
@@ -121,6 +123,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public List<Department> findAll() {
+
 		PreparedStatement st = null;
 		ResultSet rs = null;
 		try {
@@ -142,6 +145,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			DB.closeResultSet(rs);
 			DB.closeStatement(st);
 		}
+
 	}
 
 }
