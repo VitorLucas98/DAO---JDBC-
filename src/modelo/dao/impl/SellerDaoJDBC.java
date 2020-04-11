@@ -108,6 +108,8 @@ public class SellerDaoJDBC implements SellerDao {
 				int linhasAfetadas = st.executeUpdate();
 					if (linhasAfetadas == 0) {
 						throw new DbException("Não foi possivel deletar !");
+					}else {
+						System.out.println("deletado com sucesso !!");
 					}
 				}catch(SQLException e) {
 					throw new DbException(e.getMessage());
